@@ -1,0 +1,20 @@
+CREATE TABLE Users (
+    UserId SERIAL PRIMARY KEY,
+    UserName VARCHAR NOT NULL,
+    UserPassword VARCHAR NOT NULL,
+    duration INTEGER NOT NULL
+);
+
+CREATE TABLE Books (
+    BookId SERIAL PRIMARY KEY,
+    Title VARCHAR NOT NULL,
+    Author VARCHAR NOT NULL,
+    Year INTEGER NOT NULL
+);
+
+CREATE TABLE Reviews (
+    ReviewId SERIAL PRIMARY KEY,
+    UserKey INTEGER NOT NULL,
+    BookKey INTEGER NOT NULL,
+    Review INTEGER NOT NULL
+);
