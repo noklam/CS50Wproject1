@@ -7,6 +7,7 @@ CREATE TABLE Users (
 
 CREATE TABLE Books (
     BookId SERIAL PRIMARY KEY,
+    Isbn VARCHAR NOT NULL,
     Title VARCHAR NOT NULL,
     Author VARCHAR NOT NULL,
     Year INTEGER NOT NULL
@@ -16,5 +17,6 @@ CREATE TABLE Reviews (
     ReviewId SERIAL PRIMARY KEY,
     UserKey INTEGER NOT NULL,
     BookKey INTEGER NOT NULL,
-    Review INTEGER NOT NULL
+    Review INTEGER NOT NULL,
+    UNIQUE ( UserKey,BookKey)
 );
