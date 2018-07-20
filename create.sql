@@ -2,7 +2,7 @@ CREATE TABLE Users (
     UserId SERIAL PRIMARY KEY,
     UserName VARCHAR NOT NULL,
     UserPassword VARCHAR NOT NULL,
-    duration INTEGER NOT NULL
+    Email INTEGER NOT NULL
 );
 
 CREATE TABLE Books (

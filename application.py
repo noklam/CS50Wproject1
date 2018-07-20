@@ -26,4 +26,10 @@ def index():
    
     users = db.execute("SELECT * FROM Users").fetchall()
     return render_template("index.html", user_id=users)
+@app.route("/book")
+def book():
+    return render_template("index.html", user_id=users)
 
+@app.route("/register", methods=["GET"])
+def register():
+    return  render_template("index.html")
