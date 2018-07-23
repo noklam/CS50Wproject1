@@ -2,7 +2,8 @@ CREATE TABLE Users (
     UserId SERIAL PRIMARY KEY,
     UserName VARCHAR NOT NULL,
     UserPassword VARCHAR NOT NULL,
-    Email INTEGER NOT NULL
+    Email VARCHAR NOT NULL,
+    UNIQUE(UserName)
 );
 
 CREATE TABLE Books (
@@ -10,7 +11,8 @@ CREATE TABLE Books (
     Isbn VARCHAR NOT NULL,
     Title VARCHAR NOT NULL,
     Author VARCHAR NOT NULL,
-    Year INTEGER NOT NULL
+    Year INTEGER NOT NULL,
+    UNIQUE(Isbn)
 );
 
 CREATE TABLE Reviews (

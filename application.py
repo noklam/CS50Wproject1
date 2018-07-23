@@ -44,16 +44,16 @@ def register():
 
     print(username, password, email)
 
-    user = db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).fetchone()
-    print("debug1")
+    user = db.execute("SELECT * FROM users WHERE username = :username", 
+            {"username": username}).fetchone()
+
     if user is not None:
         return render_template("error.html", message="This username is registered already.")
      
     try:
-        print("debug2")
         db.execute("INSERT INTO USERS (UserName, UserPassword, Email) VALUES(:username, :password, :email)",
         {"username": username, "password": password, "email": email})
-
+        db.commit() # Save the changes!
             
         # Registeration is finish.  
         return render_template("success.html")
@@ -61,3 +61,9 @@ def register():
     except: 
         print('something is wrong')
         return render_template("error.html")
+
+@app.route("/users")
+def user():
+    
+    users = db.execute("SELECT username FROM Users").fetchall()
+    return render_template("users.html",users = users)
