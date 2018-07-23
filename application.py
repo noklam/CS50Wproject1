@@ -26,10 +26,38 @@ def index():
    
     users = db.execute("SELECT * FROM Users").fetchall()
     return render_template("index.html", user_id=users)
+
 @app.route("/book")
-def book():
+def login():
+    print("Login")
     return render_template("index.html", user_id=users)
 
-@app.route("/register", methods=["GET"])
+@app.route("/registeration", methods=["GET"])
+def registeration():
+    return render_template("registeration.html")
+
+@app.route("/register", methods=["POST"])
 def register():
-    return  render_template("index.html")
+    username = request.form.get("username")
+    password = request.form.get("password")
+    email = request.form.get("email")
+
+    print(username, password, email)
+
+    user = db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).fetchone()
+    print("debug1")
+    if user is not None:
+        return render_template("error.html", message="This username is registered already.")
+     
+    try:
+        print("debug2")
+        db.execute("INSERT INTO USERS (UserName, UserPassword, Email) VALUES(:username, :password, :email)",
+        {"username": username, "password": password, "email": email})
+
+            
+        # Registeration is finish.  
+        return render_template("success.html")
+        
+    except: 
+        print('something is wrong')
+        return render_template("error.html")

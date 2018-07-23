@@ -15,4 +15,8 @@
 * Add Register button
 * Add Register Page
 
-
+7/23/2018:
+* Add Register Logic
+* Add Login Logic
+* Add Error page logic
+* Add success.html

@@ -7,7 +7,7 @@
 {% block body %}
     <h1>Welcome !</h1>
 
-    <form action="{{ url_for('book') }}" method="post">
+    <form action="{{ url_for('register') }}" method="POST">
 
         <div class="form-group">
             <input class="form-control" name="username" placeholder="username">
@@ -20,7 +20,6 @@
         <div class="form-group">
             <input class="form-control" name="email" placeholder="abc123@gmail.com">
         </div>
-
         <div class="form-group">
             <button class="btn btn-primary">Register!</button>
         </div>
