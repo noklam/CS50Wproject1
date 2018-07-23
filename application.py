@@ -1,9 +1,10 @@
 import os
 
-from flask import Flask, session,  render_template, request
+from flask import Flask, session,  render_template, request,jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+import requests
 
 app = Flask(__name__)
 
@@ -27,6 +28,28 @@ def index():
     users = db.execute("SELECT * FROM Users").fetchall()
     return render_template("index.html", users=users)
 
+
+
+@app.route("/search", methods=["POST"])
+def search():
+        title = request.form.get("title")
+        isbn = request.form.get("isbn")
+        author = request.form.get("author")
+        return ("it's ok")
+
+@app.route("/api/<int:isbn>")
+def api(isbn):
+    # isbn = "9781632168146" # for testing
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": 
+    os.environ.get('GOODREADKEY')
+    , "isbns": isbn})
+
+
+    return str(res.json())
+
+
+
+
 @app.route("/login", methods=["POST"])
 def login():
     username = request.form.get("username")
@@ -39,7 +62,7 @@ def login():
     if login_success:
         print("Login")
         print(f"Welcome {username}, you have login successfully!")
-        return render_template("index.html", username=username)
+        return render_template("search.html", username=username)
     else:
         return render_template("error.html", message="something is wrong!")
 

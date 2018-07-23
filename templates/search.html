@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Flights
+{% endblock %}
+
+{% block body %}
+    <h1>Welcome  {{ username }}        !</h1>
+
+    <form action="{{ url_for('search') }}" method="post">
+
+        <div class="form-group">
+            <input class="form-control" name="title" placeholder="title">
+        </div>
+
+        <div class="form-group">
+            <input class="form-control" name="isbn" placeholder="isbn">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="author" placeholder="author">
+        </div>
+    
+        <div class="form-group">
+            <button class="btn btn-primary">Search</button>
+        </div>
+    </form>
+    
+    <!-- <form action="{{ url_for('registeration') }}" method="GET">
+        <div class="register">
+            <button class="btn btn-primary">Register First</button>
+        </div>
+    </form> -->
+
+
+{% endblock %}
