@@ -20,3 +20,11 @@
 * Add Login Logic
 * Add Error page logic
 * Add success.html
+* Check empty form
+
+
+
+Thins to do
+* Add session["user_id"]
+* Add Search function
+* Link with API

@@ -7,5 +7,12 @@
 {% block body %}
     <h1>Success!</h1>
 
-    You have successfully booked your flight.
+    You have successfully registered.
+
+    <form action="{{ url_for('index') }}" method="GET">
+        <div class="form-group">
+            <button class="btn btn-primary">Home Page</button>
+        </div>
+    </form>
+    
 {% endblock %}

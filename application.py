@@ -25,12 +25,23 @@ db = scoped_session(sessionmaker(bind=engine))
 def index():
    
     users = db.execute("SELECT * FROM Users").fetchall()
-    return render_template("index.html", user_id=users)
+    return render_template("index.html", users=users)
 
-@app.route("/book")
+@app.route("/login", methods=["POST"])
 def login():
-    print("Login")
-    return render_template("index.html", user_id=users)
+    username = request.form.get("username")
+    password = request.form.get("password")
+
+    # User Validation
+    login_success = db.execute("SELECT * FROM users WHERE username= :username and userpassword= :password", 
+            {"username": username, "password":password}).fetchone()
+    print('login success', login_success)
+    if login_success:
+        print("Login")
+        print(f"Welcome {username}, you have login successfully!")
+        return render_template("index.html", username=username)
+    else:
+        return render_template("error.html", message="something is wrong!")
 
 @app.route("/registeration", methods=["GET"])
 def registeration():
@@ -43,6 +54,9 @@ def register():
     email = request.form.get("email")
 
     print(username, password, email)
+
+    if not username or not password or not email:
+        return render_template("error.html", message="Some of your field is empty!") 
 
     user = db.execute("SELECT * FROM users WHERE username = :username", 
             {"username": username}).fetchone()
@@ -60,7 +74,7 @@ def register():
         
     except: 
         print('something is wrong')
-        return render_template("error.html")
+        return render_template("error.html","User registration fails!")
 
 @app.route("/users")
 def user():
