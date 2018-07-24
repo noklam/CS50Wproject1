@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, session,  render_template, request,jsonify
+from flask import Flask, session,  render_template, request, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -24,30 +24,33 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def index():
-   
+
     users = db.execute("SELECT * FROM Users").fetchall()
     return render_template("index.html", users=users)
 
 
-
 @app.route("/search", methods=["POST"])
 def search():
-        title = request.form.get("title")
-        isbn = request.form.get("isbn")
-        author = request.form.get("author")
-        return ("it's ok")
+    title = request.form.get("title")
+    isbn = request.form.get("isbn")
+    author = request.form.get("author")
+
+    if not (title and isbn and author):
+        return ("no paramter? at least one please")
+    else:
+        results = db.execute("SELECT title, isbn, author FROM BOOKS WHERE (:title IS NULL OR title LIKE '%:title%') AND (:isbn IS NULL OR isbn LIKE '%:title%') AND (:author IS NULL OR author LIKE '%:author%')",
+        {"author":author, "isbn":isbn, "title":title})
+    return render_template("books.html", books=books)
+
 
 @app.route("/api/<int:isbn>")
 def api(isbn):
     # isbn = "9781632168146" # for testing
-    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": 
-    os.environ.get('GOODREADKEY')
-    , "isbns": isbn})
-
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key":
+                     
+                                                                                    os.environ.get('GOODREADKEY'), "isbns": isbn})
 
     return str(res.json())
-
-
 
 
 @app.route("/login", methods=["POST"])
@@ -56,8 +59,8 @@ def login():
     password = request.form.get("password")
 
     # User Validation
-    login_success = db.execute("SELECT * FROM users WHERE username= :username and userpassword= :password", 
-            {"username": username, "password":password}).fetchone()
+    login_success = db.execute("SELECT * FROM users WHERE username= :username and userpassword= :password",
+                               {"username": username, "password": password}).fetchone()
     print('login success', login_success)
     if login_success:
         print("Login")
@@ -66,9 +69,11 @@ def login():
     else:
         return render_template("error.html", message="something is wrong!")
 
+
 @app.route("/registeration", methods=["GET"])
 def registeration():
     return render_template("registeration.html")
+
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -79,28 +84,51 @@ def register():
     print(username, password, email)
 
     if not username or not password or not email:
-        return render_template("error.html", message="Some of your field is empty!") 
+        return render_template("error.html", message="Some of your field is empty!")
 
-    user = db.execute("SELECT * FROM users WHERE username = :username", 
-            {"username": username}).fetchone()
+    user = db.execute("SELECT * FROM users WHERE username = :username",
+                      {"username": username}).fetchone()
 
     if user is not None:
         return render_template("error.html", message="This username is registered already.")
-     
+
     try:
         db.execute("INSERT INTO USERS (UserName, UserPassword, Email) VALUES(:username, :password, :email)",
-        {"username": username, "password": password, "email": email})
-        db.commit() # Save the changes!
-            
-        # Registeration is finish.  
+                   {"username": username, "password": password, "email": email})
+        db.commit()  # Save the changes!
+
+        # Registeration is finish.
         return render_template("success.html")
-        
-    except: 
+
+    except:
         print('something is wrong')
-        return render_template("error.html","User registration fails!")
+        return render_template("error.html", "User registration fails!")
+
 
 @app.route("/users")
 def user():
-    
+
     users = db.execute("SELECT username FROM Users").fetchall()
-    return render_template("users.html",users = users)
+    return render_template("users.html", users=users)
+
+
+@app.route("/books")
+def books():
+    """Lists all books."""
+    books = db.execute("SELECT * FROM books").fetchall()
+    return render_template("books.html", books=books)
+
+
+@app.route("/books/<int:book_id>")
+def book(book_id):
+    """Lists details about a single book."""
+
+    # Make sure book exists.
+    book = db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).fetchone()
+    if book is None:
+        return render_template("error.html", message="No such book.")
+
+    # Get all passengers.
+    passengers = db.execute("SELECT name FROM passengers WHERE book_id = :book_id",
+                            {"book_id": book_id}).fetchall()
+    return render_template("book.html", book=book, passengers=passengers)

@@ -1,16 +1,16 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Flights
+    Books
 {% endblock %}
 
 {% block body %}
     <h1>All Flights</h1>
 
     <ul>
-        {% for flight in flights %}
+        {% for book in books %}
             <li>
-                <a href="{{ url_for('flight', flight_id=flight.id) }}">
+                <a href="{{ url_for('book', book_id=book.id) }}">
                     {{ flight.origin }} to {{ flight.destination }}
                 </a>
             </li>
