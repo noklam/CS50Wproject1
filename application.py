@@ -21,7 +21,10 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
-
+def api(isbn):
+    # isbn = "9781632168146" # for testing
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": os.environ.get('GOODREADKEY'), "isbns": isbn})
+    return res.json()
 @app.route("/")
 def index():
 
@@ -29,28 +32,13 @@ def index():
     return render_template("index.html", users=users)
 
 
-@app.route("/search", methods=["POST"])
-def search():
-    title = request.form.get("title")
-    isbn = request.form.get("isbn")
-    author = request.form.get("author")
-
-    if not (title or isbn or author):
-        return ("no paramter? at least one please")
-    else:
-        results = db.execute(f"SELECT title, isbn, author FROM BOOKS WHERE (:title IS NULL OR title LIKE '%{title}%') AND (:isbn IS NULL OR isbn LIKE '%{isbn}%') AND (:author IS NULL OR author LIKE '%{author}%')",
-        {"author":author, "isbn":isbn, "title":title})
-    return render_template("books.html", books=books)
-
-
 @app.route("/api/<int:isbn>")
-def api(isbn):
+def api_request(isbn):
+    return str(api(isbn))
     # isbn = "9781632168146" # for testing
-    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key":
-                     
-                                                                                    os.environ.get('GOODREADKEY'), "isbns": isbn})
+    # res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": os.environ.get('GOODREADKEY'), "isbns": isbn})
 
-    return str(res.json())
+    # return str(res.json())
 
 
 @app.route("/login", methods=["POST"])
@@ -111,24 +99,47 @@ def user():
     users = db.execute("SELECT username FROM Users").fetchall()
     return render_template("users.html", users=users)
 
+@app.route("/search", methods=["POST"])
+def search():
+    title = request.form.get("title")
+    isbn = request.form.get("isbn")
+    author = request.form.get("author")
+
+    if not (title or isbn or author):
+        return ("no paramter? at least one please")
+    else:
+        results = db.execute(f"SELECT title, isbn, author FROM BOOKS WHERE (:title IS NULL OR title LIKE '%{title}%') AND (:isbn IS NULL OR isbn LIKE '%{isbn}%') AND (:author IS NULL OR author LIKE '%{author}%')",
+        {"author":author, "isbn":isbn, "title":title}).fetchall()
+        # raise
+    return render_template("books.html", books=results)
+
 
 @app.route("/books")
 def books():
     """Lists all books."""
+    print("books function")
     books = db.execute("SELECT * FROM books").fetchall()
+    raise
+    print(books)
     return render_template("books.html", books=books)
 
 
-@app.route("/books/<int:book_id>")
-def book(book_id):
+@app.route("/books/<isbn>")
+def book(isbn):
     """Lists details about a single book."""
-
+    print("book function")
     # Make sure book exists.
-    book = db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).fetchone()
+    book = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
     if book is None:
         return render_template("error.html", message="No such book.")
+    book_api = api(isbn)
+    book.api, book.average_rating, book. = "",""
+    
+    if book_api.reviews_count:
+        book.api = book_api.review_counts
+    if book_api.average_rating:
+        book.average_rating = book_api.average_rating
 
-    # Get all passengers.
-    passengers = db.execute("SELECT name FROM passengers WHERE book_id = :book_id",
-                            {"book_id": book_id}).fetchall()
-    return render_template("book.html", book=book, passengers=passengers)
+
+  
+    return render_template("book.html", book=book)
