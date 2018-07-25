@@ -5,13 +5,13 @@
 {% endblock %}
 
 {% block body %}
-    <h1>All Flights</h1>
+    <h1>All Books</h1>
 
     <ul>
         {% for book in books %}
             <li>
-                <a href="{{ url_for('book', book_id=book.id) }}">
-                    {{ flight.origin }} to {{ flight.destination }}
+                <a href="{{ url_for('book', isbn=book.isbn) }}">
+                    {{ book.title }} to {{ book.author }}
                 </a>
             </li>
         {% endfor %}

@@ -22,9 +22,16 @@
 * Add success.html
 * Check empty form
 
+7/25/2018:
+* Add book() details
+* Can Search mulitple books, each book have a href tag and lead to details of individual book.
+* Call api() inside book() to retrieve data externally from API
+
 
 
 Thins to do
+* User Review
+* Hashing Password
 * Add session["user_id"]
 * Add Search function
 * Book Page
