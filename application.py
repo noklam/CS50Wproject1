@@ -35,10 +35,10 @@ def search():
     isbn = request.form.get("isbn")
     author = request.form.get("author")
 
-    if not (title and isbn and author):
+    if not (title or isbn or author):
         return ("no paramter? at least one please")
     else:
-        results = db.execute("SELECT title, isbn, author FROM BOOKS WHERE (:title IS NULL OR title LIKE '%:title%') AND (:isbn IS NULL OR isbn LIKE '%:title%') AND (:author IS NULL OR author LIKE '%:author%')",
+        results = db.execute(f"SELECT title, isbn, author FROM BOOKS WHERE (:title IS NULL OR title LIKE '%{title}%') AND (:isbn IS NULL OR isbn LIKE '%{isbn}%') AND (:author IS NULL OR author LIKE '%{author}%')",
         {"author":author, "isbn":isbn, "title":title})
     return render_template("books.html", books=books)
 

@@ -25,6 +25,7 @@
 
 
 Thins to do
+* Hashing Password
 * Add session["user_id"]
 * Add Search function
 * Book Page
