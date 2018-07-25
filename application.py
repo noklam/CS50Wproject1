@@ -132,14 +132,17 @@ def book(isbn):
     book = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
     if book is None:
         return render_template("error.html", message="No such book.")
-    book_api = api(isbn)
-    book.api, book.average_rating, book. = "",""
+    book_api = api(isbn)['books'][0]
     
-    if book_api.reviews_count:
-        book.api = book_api.review_counts
-    if book_api.average_rating:
-        book.average_rating = book_api.average_rating
+    book = dict(book)
+    # raise
+    book['reviews_count'], book['average_rating'] = "",""
+    
+    if book_api.get('reviews_counts'):
+            book['reviews_count'] = book_api.get('reviews_count')
+    if book_api.get('average_rating'):
+       book['average_rating'] = book_api.get('average_rating')
 
-
+    # raise
   
     return render_template("book.html", book=book)
