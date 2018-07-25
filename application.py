@@ -32,6 +32,27 @@ def index():
     return render_template("index.html", users=users)
 
 
+<<<<<<< HEAD
+@app.route("/search", methods=["POST"])
+def search():
+    title = request.form.get("title")
+    isbn = request.form.get("isbn")
+    author = request.form.get("author")
+
+    if not (title or isbn or author):
+        return ("no paramter? at least one please")
+    else:
+        title = "%" + title + "%"
+        isbn = "%" + isbn + "%"
+        author = "%" + author + "%"
+
+        results = db.execute("SELECT title, isbn, author FROM BOOKS WHERE (:title IS NULL OR title LIKE '%:title%') AND (:isbn IS NULL OR isbn LIKE '%:title%') AND (:author IS NULL OR author LIKE '%:author%')",
+        {"author":author, "isbn":isbn, "title":title})
+    return render_template("books.html", books=books)
+
+
+=======
+>>>>>>> 8dc428e53832fec49b4358491ce1847ba685f0ce
 @app.route("/api/<int:isbn>")
 def api_request(isbn):
     return str(api(isbn))
