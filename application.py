@@ -151,8 +151,8 @@ def book(isbn):
 
     # raise
     # set session for book, which can be used for review()
-    print(">>" * 20)
-    print(book)
+   
+   
     session['book_id'] = book['bookid']
     session['book_title'] = book['title']
   
@@ -164,35 +164,43 @@ def review():
     rating = request.form.get("rating")
     review_content = request.form.get("review_content")
     user_id = session.get('user_id', 'not set')
+    book_id = session.get('book_id', 'not set')
 
-    print(rating, review_content)
-
-    if not rating or not passwreview_content:
+    print(rating, review_content, user_id, book_id)
+    print(">>" * 20)
+    if not (rating and review_content and user_id and book_id):
         return render_template("error.html", message="Some of your field is empty!")
-
-    user_review = db.execute("SELECT * FROM reviews WHERE username = :username",
-                      {"username": username}).fetchone()
-
-    if user is not None:
-        return render_template("error.html", message="This username is registered already.")
-
+    
+    user_review = db.execute("SELECT * FROM reviews WHERE userkey = :userkey",
+                      {"userkey": user_id}).fetchone()
+    print("**" * 20)    
+    print('user_review:',user_review)
+    if user_review is not None:
+        return render_template("error.html", message="You have already submitted a review")
+    
     try:
-        db.execute("INSERT INTO USERS (UserName, UserPassword, Email) VALUES(:username, :password, :email)",
-                   {"username": username, "password": password, "email": email})
+        db.execute("INSERT INTO REVIEWS (UserKey, BookKey, Review) VALUES(:userkey, :bookkey, :review_content)",
+                   {"userkey": user_id, "bookkey": book_id, "review_content": review_content})
         db.commit()  # Save the changes!
 
         # Registeration is finish.
         return render_template("success.html")
 
     except:
-        print('something is wrong')
-        return render_template("error.html", "User registration fails!")
-    return "PASS"
+        print('something is wrong review')
+        return render_template("error.html", "Review Submission Failed, something is wrong!")
+    
 
 
 
 
 @app.route('/get/')
 def get():
-    return session.get('user_id', 'not set')
+    tmp = session.get('user_id', 'not set')
+    return str(tmp)
 
+
+def redirect_url(default='index'):
+    return request.args.get('next') or \
+           request.referrer or \
+           url_for(default)
