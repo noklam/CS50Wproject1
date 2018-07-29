@@ -19,6 +19,7 @@ CREATE TABLE Reviews (
     ReviewId SERIAL PRIMARY KEY,
     UserKey INTEGER NOT NULL,
     BookKey INTEGER NOT NULL,
-    Review INTEGER NOT NULL,
+    Review VARCHAR NOT NULL,
+    Rating INTEGER NOT NULL
     UNIQUE ( UserKey,BookKey)
 );
