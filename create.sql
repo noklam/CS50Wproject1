@@ -20,6 +20,6 @@ CREATE TABLE Reviews (
     UserKey INTEGER NOT NULL,
     BookKey INTEGER NOT NULL,
     Review VARCHAR NOT NULL,
-    Rating INTEGER NOT NULL
+    Rating INTEGER NOT NULL,
     UNIQUE ( UserKey,BookKey)
 );
