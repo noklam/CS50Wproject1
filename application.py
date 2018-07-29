@@ -32,27 +32,6 @@ def index():
     return render_template("index.html", users=users)
 
 
-<<<<<<< HEAD
-@app.route("/search", methods=["POST"])
-def search():
-    title = request.form.get("title")
-    isbn = request.form.get("isbn")
-    author = request.form.get("author")
-
-    if not (title or isbn or author):
-        return ("no paramter? at least one please")
-    else:
-        title = "%" + title + "%"
-        isbn = "%" + isbn + "%"
-        author = "%" + author + "%"
-
-        results = db.execute("SELECT title, isbn, author FROM BOOKS WHERE (:title IS NULL OR title LIKE '%:title%') AND (:isbn IS NULL OR isbn LIKE '%:title%') AND (:author IS NULL OR author LIKE '%:author%')",
-        {"author":author, "isbn":isbn, "title":title})
-    return render_template("books.html", books=books)
-
-
-=======
->>>>>>> 8dc428e53832fec49b4358491ce1847ba685f0ce
 @app.route("/api/<int:isbn>")
 def api_request(isbn):
     return str(api(isbn))
@@ -68,12 +47,18 @@ def login():
     password = request.form.get("password")
 
     # User Validation
-    login_success = db.execute("SELECT * FROM users WHERE username= :username and userpassword= :password",
+    user = db.execute("SELECT * FROM users WHERE username= :username and userpassword= :password",
                                {"username": username, "password": password}).fetchone()
-    print('login success', login_success)
-    if login_success:
+    print('login success', user)
+    if user:
         print("Login")
         print(f"Welcome {username}, you have login successfully!")
+
+        user_id, user_name,user_password,user_email = user
+        session['user_id'] = user_id
+        session['user_name'] = user_name
+        session['user_email'] = user_email
+        
         return render_template("search.html", username=username)
     else:
         return render_template("error.html", message="something is wrong!")
@@ -165,10 +150,49 @@ def book(isbn):
        book['average_rating'] = book_api.get('average_rating')
 
     # raise
+    # set session for book, which can be used for review()
+    print(">>" * 20)
+    print(book)
+    session['book_id'] = book['bookid']
+    session['book_title'] = book['title']
   
     return render_template("book.html", book=book)
 
 
 @app.route("/review", methods=["POST"])
 def review():
+    rating = request.form.get("rating")
+    review_content = request.form.get("review_content")
+    user_id = session.get('user_id', 'not set')
+
+    print(rating, review_content)
+
+    if not rating or not passwreview_content:
+        return render_template("error.html", message="Some of your field is empty!")
+
+    user_review = db.execute("SELECT * FROM reviews WHERE username = :username",
+                      {"username": username}).fetchone()
+
+    if user is not None:
+        return render_template("error.html", message="This username is registered already.")
+
+    try:
+        db.execute("INSERT INTO USERS (UserName, UserPassword, Email) VALUES(:username, :password, :email)",
+                   {"username": username, "password": password, "email": email})
+        db.commit()  # Save the changes!
+
+        # Registeration is finish.
+        return render_template("success.html")
+
+    except:
+        print('something is wrong')
+        return render_template("error.html", "User registration fails!")
     return "PASS"
+
+
+
+
+@app.route('/get/')
+def get():
+    return session.get('user_id', 'not set')
+

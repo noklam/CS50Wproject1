@@ -1,6 +1,11 @@
 # CS50Wproject1
 
+## Description 
+
+This project try to build a book search and review engine with Flask, PostgresSQL. Flask extension is avoid when possible and logic implemented with native python.
+
 ## Behaviors
+
 1. Registration
 2. Login
 3. Logout
@@ -16,8 +21,8 @@
 * Add Register Page
 
 7/23/2018:
-* Add Register Logic
 
+* Add Register Logic
 * Add Login Logic
 * Add Error page logic
 * Add success.html
@@ -31,6 +36,7 @@
 
 7/29/2018:
 
+* Add session["user_id"]
 * Add Review function()
 
 Things to do
