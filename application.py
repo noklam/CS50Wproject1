@@ -167,3 +167,8 @@ def book(isbn):
     # raise
   
     return render_template("book.html", book=book)
+
+
+@app.route("/review", methods=["POST"])
+def review():
+    return "PASS"

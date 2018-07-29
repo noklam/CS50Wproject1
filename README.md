@@ -10,26 +10,31 @@
 7. Review Submission
 8. Goodreads Review Data
 
-
 7/20/2018:
+
 * Add Register button
 * Add Register Page
 
 7/23/2018:
 * Add Register Logic
+
 * Add Login Logic
 * Add Error page logic
 * Add success.html
 * Check empty form
 
 7/25/2018:
+
 * Add book() details
 * Can Search mulitple books, each book have a href tag and lead to details of individual book.
 * Call api() inside book() to retrieve data externally from API
 
+7/29/2018:
 
+* Add Review function()
 
-Thins to do
+Things to do
+
 * User Review
 * Hashing Password
 * Add session["user_id"]
