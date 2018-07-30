@@ -40,7 +40,6 @@ def api_request(isbn):
 
     # return str(res.json())
 
-
 @app.route("/login", methods=["POST"])
 def login():
     username = request.form.get("username")
@@ -63,7 +62,6 @@ def login():
     else:
         return render_template("error.html", message="something is wrong!")
 
-
 @app.route("/registeration", methods=["GET"])
 def registeration():
     return render_template("registeration.html")
@@ -75,8 +73,7 @@ def register():
     password = request.form.get("password")
     email = request.form.get("email")
 
-    print(username, password, email)
-
+    # print(username, password, email)
     if not username or not password or not email:
         return render_template("error.html", message="Some of your field is empty!")
 
@@ -99,11 +96,11 @@ def register():
         return render_template("error.html", "User registration fails!")
 
 
-@app.route("/users")
-def user():
+# @app.route("/users")
+# def user():
 
-    users = db.execute("SELECT username FROM Users").fetchall()
-    return render_template("users.html", users=users)
+#     users = db.execute("SELECT username FROM Users").fetchall()
+#     return render_template("users.html", users=users)
 
 @app.route("/search", methods=["POST"])
 def search():
@@ -120,20 +117,21 @@ def search():
     return render_template("books.html", books=results)
 
 
-@app.route("/books")
-def books():
-    """Lists all books."""
-    print("books function")
-    books = db.execute("SELECT * FROM books").fetchall()
-    raise
-    print(books)
-    return render_template("books.html", books=books)
+# @app.route("/books")
+# def books():
+#     """Lists all books."""
+#     print("books function")
+#     books = db.execute("SELECT * FROM books").fetchall()
+#     raise
+#     print(books)
+#     return render_template("books.html", books=books)
 
 
-@app.route("/books/<isbn>")
+@app.route("/books/<isbn>", methods=["GET"])
 def book(isbn):
     """Lists details about a single book."""
-    print("book function")
+    if not validate_login():
+        return render_template("error.html", message="Please login first.")
     # Make sure book exists.
     book = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
     if book is None:
@@ -151,8 +149,12 @@ def book(isbn):
 
     # raise
     # set session for book, which can be used for review()
+<<<<<<< HEAD
    
    
+=======
+
+>>>>>>> 697f1622203b577a50cb07ca59488cad796f0519
     session['book_id'] = book['bookid']
     session['book_title'] = book['title']
   
@@ -187,9 +189,15 @@ def review():
         return render_template("success.html")
 
     except:
+<<<<<<< HEAD
         print('something is wrong review')
         return render_template("error.html", "Review Submission Failed, something is wrong!")
     
+=======
+        print('something is wrong')
+        return render_template("error.html", message="User registration fails!")
+    return "PASS"
+>>>>>>> 697f1622203b577a50cb07ca59488cad796f0519
 
 
 
@@ -200,7 +208,25 @@ def get():
     return str(tmp)
 
 
+<<<<<<< HEAD
 def redirect_url(default='index'):
     return request.args.get('next') or \
            request.referrer or \
            url_for(default)
+=======
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    session['user_id'] = ""
+    session['user_name'] = ""
+    try:
+        return render_template("logout.html", message="You have logout successfully")
+    except:
+        return render_template("error.html", message="something is wrong, logout failed")    
+        
+
+def validate_login():
+    """ A boolean variable indicate user is login"""
+    return session['user_id'] != ""
+       
+>>>>>>> 697f1622203b577a50cb07ca59488cad796f0519

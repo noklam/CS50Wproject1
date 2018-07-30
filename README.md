@@ -38,6 +38,12 @@ This project try to build a book search and review engine with Flask, PostgresSQ
 
 * Add session["user_id"]
 * Add Review function()
+  
+7/30/2018:
+
+* Add logout button
+* Logout button only appears when user is logined 
+* Check User is logged in on every route
 
 Things to do
 
