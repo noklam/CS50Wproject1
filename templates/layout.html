@@ -6,6 +6,26 @@
     </head>
     <body>
         <div class="container">
+                {% if session.user_id == "" %}
+           
+
+
+                
+                {% endif %}
+                <!-- <a>1234</a> -->
+                {% if session.user_id != "" %}
+                    <form action="{{ url_for('logout') }}" method="post">
+                        <div class="logout">
+                            <button class="btn btn-primary">Logout</button>
+                        </div> 
+                        
+                    </form>
+                    <a>{{session.user_name}}</a>
+
+
+                
+                {% endif %}
+               
             {% block body %}
             {% endblock %}
         </div>

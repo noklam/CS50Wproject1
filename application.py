@@ -186,7 +186,7 @@ def review():
 
     except:
         print('something is wrong')
-        return render_template("error.html", "User registration fails!")
+        return render_template("error.html", message="User registration fails!")
     return "PASS"
 
 
@@ -195,4 +195,15 @@ def review():
 @app.route('/get/')
 def get():
     return session.get('user_id', 'not set')
+
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    session['user_id'] = ""
+    session['user_name'] = ""
+    try:
+        return render_template("logout.html", message="You have logout successfully")
+    except:
+        return render_template("error.html", message="something is wrong, logout failed")    
+        
 
