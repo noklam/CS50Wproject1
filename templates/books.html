@@ -16,5 +16,8 @@
             </li>
         {% endfor %}
     </ul>
+    {% if not books %}    
+        <a>No match record.</a>    
+    {% endif %}
 
 {% endblock %}
