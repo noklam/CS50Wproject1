@@ -45,6 +45,11 @@ This project try to build a book search and review engine with Flask, PostgresSQ
 * Logout button only appears when user is logined 
 * Check User is logged in on every route
 
+7/31/2018:
+
+* Return no review when no user review is there
+* Return no serach result instead of empty page when no book
+
 Things to do
 
 * Add no result route for search.

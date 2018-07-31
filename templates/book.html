@@ -16,6 +16,19 @@
         <li>Average Score: {{ book.average_rating}} </li>
     </ul>
 
+
+    <ul>
+        {% for review in book.reviews %}
+            <li>
+                <a>
+                    {{ review.rating }} to {{ review.review_content }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+   
+
     <form action="{{ url_for('review') }}" method="post">
     
             <div class="form-group">

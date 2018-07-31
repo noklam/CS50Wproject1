@@ -152,6 +152,11 @@ def book(isbn):
     session['book_id'] = book['bookid']
     session['book_title'] = book['title']
   
+    # Fetch existing review data
+    reviews = db.execute("SELECT Rating, Review FROM reviews WHERE bookkey = :bookid",
+    {"bookid": book['bookid']}).fetchall()
+    book['reviews'] = reviews
+    # raise
     return render_template("book.html", book=book)
 
 
@@ -168,8 +173,8 @@ def review():
     if not (rating and review_content and user_id and book_id):
         return render_template("error.html", message="Some of your field is empty!")
     
-    user_review = db.execute("SELECT * FROM reviews WHERE userkey = :userkey",
-                      {"userkey": user_id}).fetchone()
+    user_review = db.execute("SELECT * FROM reviews WHERE userkey = :userkey and bookkey = :bookkey", 
+                      {"userkey": user_id, "bookkey": book_id}).fetchone()
     print("**" * 20)    
     print('user_review:',user_review)
     if user_review is not None:
