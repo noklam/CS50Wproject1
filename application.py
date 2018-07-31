@@ -1,5 +1,4 @@
 import os
-
 from flask import Flask, session,  render_template, request, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
@@ -25,6 +24,7 @@ def api(isbn):
     # isbn = "9781632168146" # for testing
     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": os.environ.get('GOODREADKEY'), "isbns": isbn})
     return res.json()
+
 @app.route("/")
 def index():
 
@@ -142,7 +142,7 @@ def book(isbn):
     # raise
     book['reviews_count'], book['average_rating'] = "",""
     
-    if book_api.get('reviews_counts'):
+    if book_api.get('reviews_count'):
             book['reviews_count'] = book_api.get('reviews_count')
     if book_api.get('average_rating'):
        book['average_rating'] = book_api.get('average_rating')
@@ -157,13 +157,14 @@ def book(isbn):
 
 @app.route("/review", methods=["POST"])
 def review():
-    rating = request.form.get("rating")
+    rating = int(request.form.get("rating"))
     review_content = request.form.get("review_content")
     user_id = session.get('user_id', 'not set')
     book_id = session.get('book_id', 'not set')
 
     print(rating, review_content, user_id, book_id)
     print(">>" * 20)
+    # Check no empty field and user is logged in
     if not (rating and review_content and user_id and book_id):
         return render_template("error.html", message="Some of your field is empty!")
     
@@ -175,8 +176,9 @@ def review():
         return render_template("error.html", message="You have already submitted a review")
     
     try:
-        db.execute("INSERT INTO REVIEWS (UserKey, BookKey, Review) VALUES(:userkey, :bookkey, :review_content)",
-                   {"userkey": user_id, "bookkey": book_id, "review_content": review_content})
+        db.execute("INSERT INTO REVIEWS (UserKey, BookKey, Review, Rating) VALUES(:userkey, :bookkey, :review_content, :rating)",
+                   {"userkey": user_id, "bookkey": book_id, "review_content": review_content, "rating": rating})
+        print('Before commit')
         db.commit()  # Save the changes!
 
         # Registeration is finish.
