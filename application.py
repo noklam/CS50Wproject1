@@ -149,12 +149,6 @@ def book(isbn):
 
     # raise
     # set session for book, which can be used for review()
-<<<<<<< HEAD
-   
-   
-=======
-
->>>>>>> 697f1622203b577a50cb07ca59488cad796f0519
     session['book_id'] = book['bookid']
     session['book_title'] = book['title']
   
@@ -189,15 +183,9 @@ def review():
         return render_template("success.html")
 
     except:
-<<<<<<< HEAD
-        print('something is wrong review')
-        return render_template("error.html", "Review Submission Failed, something is wrong!")
-    
-=======
         print('something is wrong')
         return render_template("error.html", message="User registration fails!")
     return "PASS"
->>>>>>> 697f1622203b577a50cb07ca59488cad796f0519
 
 
 
@@ -208,12 +196,10 @@ def get():
     return str(tmp)
 
 
-<<<<<<< HEAD
 def redirect_url(default='index'):
     return request.args.get('next') or \
            request.referrer or \
            url_for(default)
-=======
 
 @app.route("/logout", methods=["POST"])
 def logout():
@@ -229,4 +215,3 @@ def validate_login():
     """ A boolean variable indicate user is login"""
     return session['user_id'] != ""
        
->>>>>>> 697f1622203b577a50cb07ca59488cad796f0519

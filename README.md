@@ -47,6 +47,7 @@ This project try to build a book search and review engine with Flask, PostgresSQ
 
 Things to do
 
+* Add no result route for search.
 * User Review
 * Hashing Password
 * Add session["user_id"]
