@@ -13,7 +13,7 @@
         <!-- Logout button if user is logged in.-->
         {% if session.user_id != "" %}
         <form action="{{ url_for('logout') }}" method="post">
-            <div class="logout">
+            <div class="form-group">
                 <button class="btn btn-primary">Logout</button>
             </div>
         </form>
