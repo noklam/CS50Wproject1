@@ -16,16 +16,18 @@
         <li>Average Score: {{ book.average_rating}} </li>
     </ul>
 
-
+    <h1>Books Details</h1>
     <ul>
         {% for review in book.reviews %}
             <li>
-                <a>
-                    {{ review.rating }} to {{ review.review_content }}
-                </a>
+                <a> {{ review.rating }} </a>
+                <a> {{ review.review }} </a>
             </li>
         {% endfor %}
     </ul>
+    {% if not book.reviews %}    
+        <a>No review yet.</a>    
+    {% endif %}
 
    
 
