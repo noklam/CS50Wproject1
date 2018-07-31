@@ -27,14 +27,12 @@ def api(isbn):
 
 @app.route("/")
 def index():
-
-    users = db.execute("SELECT * FROM Users").fetchall()
+    # users = db.execute("SELECT * FROM Users").fetchall()
     return render_template("index.html", users=users)
-
 
 @app.route("/api/<int:isbn>")
 def api_request(isbn):
-    return str(api(isbn))
+    return jsonify(api(isbn))
     # isbn = "9781632168146" # for testing
     # res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": os.environ.get('GOODREADKEY'), "isbns": isbn})
 
@@ -66,7 +64,6 @@ def login():
 def registeration():
     return render_template("registeration.html")
 
-
 @app.route("/register", methods=["POST"])
 def register():
     username = request.form.get("username")
@@ -95,13 +92,6 @@ def register():
         print('something is wrong')
         return render_template("error.html", "User registration fails!")
 
-
-# @app.route("/users")
-# def user():
-
-#     users = db.execute("SELECT username FROM Users").fetchall()
-#     return render_template("users.html", users=users)
-
 @app.route("/search", methods=["POST"])
 def search():
     title = request.form.get("title")
@@ -115,17 +105,6 @@ def search():
         {"author":author, "isbn":isbn, "title":title}).fetchall()
         # raise
     return render_template("books.html", books=results)
-
-
-# @app.route("/books")
-# def books():
-#     """Lists all books."""
-#     print("books function")
-#     books = db.execute("SELECT * FROM books").fetchall()
-#     raise
-#     print(books)
-#     return render_template("books.html", books=books)
-
 
 @app.route("/books/<isbn>", methods=["GET"])
 def book(isbn):
@@ -159,7 +138,6 @@ def book(isbn):
     # raise
     return render_template("book.html", book=book)
 
-
 @app.route("/review", methods=["POST"])
 def review():
     rating = int(request.form.get("rating"))
@@ -188,20 +166,14 @@ def review():
 
         # Registeration is finish.
         return render_template("success.html")
-
     except:
         print('something is wrong')
         return render_template("error.html", message="User registration fails!")
-    return "PASS"
-
-
-
-
+    
 @app.route('/get/')
 def get():
     tmp = session.get('user_id', 'not set')
     return str(tmp)
-
 
 def redirect_url(default='index'):
     return request.args.get('next') or \
@@ -217,7 +189,6 @@ def logout():
     except:
         return render_template("error.html", message="something is wrong, logout failed")    
         
-
 def validate_login():
     """ A boolean variable indicate user is login"""
     return session['user_id'] != ""
