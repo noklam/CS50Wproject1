@@ -28,7 +28,7 @@ def api(isbn):
 @app.route("/")
 def index():
     # users = db.execute("SELECT * FROM Users").fetchall()
-    return render_template("index.html", users=users)
+    return render_template("index.html")
 
 @app.route("/api/<int:isbn>")
 def api_request(isbn):
