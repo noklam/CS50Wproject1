@@ -53,6 +53,10 @@ This project try to build a book search and review engine with Flask, PostgresSQ
 * Edit Logout, back button css style
 * Clean up unuse code
 
+8/1/2018:
+
+Add except condition for api, return HTTP 404 for invalid isbn. 
+
 Things to do
 
 * Hashing Password

@@ -1,5 +1,5 @@
 import os
-from flask import Flask, session,  render_template, request, jsonify
+from flask import Flask, session,  render_template, request, jsonify, abort
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -32,7 +32,10 @@ def index():
 
 @app.route("/api/<int:isbn>")
 def api_request(isbn):
-    return jsonify(api(isbn))
+    try:
+        return jsonify(api(isbn))
+    except:
+        return abort(404)
     # isbn = "9781632168146" # for testing
     # res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": os.environ.get('GOODREADKEY'), "isbns": isbn})
 
