@@ -1,6 +1,5 @@
 import os
-
-from flask import Flask, session,  render_template, request, jsonify
+from flask import Flask, session,  render_template, request, jsonify, abort
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -25,16 +24,18 @@ def api(isbn):
     # isbn = "9781632168146" # for testing
     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": os.environ.get('GOODREADKEY'), "isbns": isbn})
     return res.json()
+
 @app.route("/")
 def index():
-
-    users = db.execute("SELECT * FROM Users").fetchall()
-    return render_template("index.html", users=users)
-
+    # users = db.execute("SELECT * FROM Users").fetchall()
+    return render_template("index.html")
 
 @app.route("/api/<int:isbn>")
 def api_request(isbn):
-    return str(api(isbn))
+    try:
+        return jsonify(api(isbn))
+    except:
+        return abort(404)
     # isbn = "9781632168146" # for testing
     # res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": os.environ.get('GOODREADKEY'), "isbns": isbn})
 
@@ -66,7 +67,6 @@ def login():
 def registeration():
     return render_template("registeration.html")
 
-
 @app.route("/register", methods=["POST"])
 def register():
     username = request.form.get("username")
@@ -95,13 +95,6 @@ def register():
         print('something is wrong')
         return render_template("error.html", "User registration fails!")
 
-
-# @app.route("/users")
-# def user():
-
-#     users = db.execute("SELECT username FROM Users").fetchall()
-#     return render_template("users.html", users=users)
-
 @app.route("/search", methods=["POST"])
 def search():
     title = request.form.get("title")
@@ -115,17 +108,6 @@ def search():
         {"author":author, "isbn":isbn, "title":title}).fetchall()
         # raise
     return render_template("books.html", books=results)
-
-
-# @app.route("/books")
-# def books():
-#     """Lists all books."""
-#     print("books function")
-#     books = db.execute("SELECT * FROM books").fetchall()
-#     raise
-#     print(books)
-#     return render_template("books.html", books=books)
-
 
 @app.route("/books/<isbn>", methods=["GET"])
 def book(isbn):
@@ -142,7 +124,7 @@ def book(isbn):
     # raise
     book['reviews_count'], book['average_rating'] = "",""
     
-    if book_api.get('reviews_counts'):
+    if book_api.get('reviews_count'):
             book['reviews_count'] = book_api.get('reviews_count')
     if book_api.get('average_rating'):
        book['average_rating'] = book_api.get('average_rating')
@@ -152,49 +134,49 @@ def book(isbn):
     session['book_id'] = book['bookid']
     session['book_title'] = book['title']
   
+    # Fetch existing review data
+    reviews = db.execute("SELECT Rating, Review FROM reviews WHERE bookkey = :bookid",
+    {"bookid": book['bookid']}).fetchall()
+    book['reviews'] = reviews
+    # raise
     return render_template("book.html", book=book)
-
 
 @app.route("/review", methods=["POST"])
 def review():
-    rating = request.form.get("rating")
+    rating = int(request.form.get("rating"))
     review_content = request.form.get("review_content")
     user_id = session.get('user_id', 'not set')
     book_id = session.get('book_id', 'not set')
 
     print(rating, review_content, user_id, book_id)
     print(">>" * 20)
+    # Check no empty field and user is logged in
     if not (rating and review_content and user_id and book_id):
         return render_template("error.html", message="Some of your field is empty!")
     
-    user_review = db.execute("SELECT * FROM reviews WHERE userkey = :userkey",
-                      {"userkey": user_id}).fetchone()
+    user_review = db.execute("SELECT * FROM reviews WHERE userkey = :userkey and bookkey = :bookkey", 
+                      {"userkey": user_id, "bookkey": book_id}).fetchone()
     print("**" * 20)    
     print('user_review:',user_review)
     if user_review is not None:
         return render_template("error.html", message="You have already submitted a review")
     
     try:
-        db.execute("INSERT INTO REVIEWS (UserKey, BookKey, Review) VALUES(:userkey, :bookkey, :review_content)",
-                   {"userkey": user_id, "bookkey": book_id, "review_content": review_content})
+        db.execute("INSERT INTO REVIEWS (UserKey, BookKey, Review, Rating) VALUES(:userkey, :bookkey, :review_content, :rating)",
+                   {"userkey": user_id, "bookkey": book_id, "review_content": review_content, "rating": rating})
+        print('Before commit')
         db.commit()  # Save the changes!
 
         # Registeration is finish.
         return render_template("success.html")
-
     except:
         print('something is wrong')
         return render_template("error.html", message="User registration fails!")
-    return "PASS"
-
-
-
-
+    
 @app.route('/get/')
 def get():
     tmp = session.get('user_id', 'not set')
     return str(tmp)
-
 
 def redirect_url(default='index'):
     return request.args.get('next') or \
@@ -210,7 +192,6 @@ def logout():
     except:
         return render_template("error.html", message="something is wrong, logout failed")    
         
-
 def validate_login():
     """ A boolean variable indicate user is login"""
     return session['user_id'] != ""

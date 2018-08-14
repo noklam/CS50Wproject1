@@ -12,14 +12,29 @@
         <li>Author: {{ book.author }}</li>
         <li>ISBN: {{ book.isbn}} </li>
         <li>Publication Year: {{ book.year}} </li>
-        <li>Review Count: {{ book.review_count}} </li>
+        <li>Review Count: {{ book.reviews_count}} </li>
         <li>Average Score: {{ book.average_rating}} </li>
     </ul>
+
+    <h1>Books Details</h1>
+    <ul>
+        {% for review in book.reviews %}
+            <li>
+                <a> {{ review.rating }} </a>
+                <a> {{ review.review }} </a>
+            </li>
+        {% endfor %}
+    </ul>
+    {% if not book.reviews %}    
+        <a>No review yet.</a>    
+    {% endif %}
+
+   
 
     <form action="{{ url_for('review') }}" method="post">
     
             <div class="form-group">
-                <input class="form-control" name="rating" placeholder="rating">
+                <input class="form-control" name="rating" placeholder="rating" min="1" max="5">
             </div>
     
             <div class="form-group">
