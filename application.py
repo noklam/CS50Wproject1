@@ -21,8 +21,6 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
-
-
 def api(isbn):
     # isbn = "9781632168146" # for testing
     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": os.environ.get('GOODREADKEY'), "isbns": isbn})
